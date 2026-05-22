@@ -1,0 +1,45 @@
+description: "Chatbot educativo — tutor de cocina para principiantes"
+
+evaluateOptions:
+  maxConcurrency: 2
+
+providers:
+  - id: "google:gemini-2.5-flash"
+    config:
+      temperature: 0.5
+
+defaultTest:
+  options:
+    provider: "google:gemini-2.5-flash"
+    delay: 2000
+
+prompts:
+  - "Tell me about {{topic}} in cooking for a beginner. Use a simple analogy and suggest one dish."
+  - "Tell me about {{topic}}"
+
+tests:
+  - vars:
+      topic: cooking
+    assert:
+      - type: icontains
+        value: "cooking"
+      - type: javascript
+        value: output.length < 1500
+
+  - vars:
+      topic: spaghetti
+    assert:
+      - type: icontains
+        value: "spaghetti"
+      - type: javascript
+        value: output.length < 2000
+
+  - vars:
+      topic: potatoes
+    assert:
+      - type: icontains
+        value: "potatoes"
+      - type: llm-rubric
+        value: "The response is simple and suitable for beginners in cooking"
+      - type: javascript
+        value: output.length < 50
